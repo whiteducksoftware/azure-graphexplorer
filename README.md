@@ -15,7 +15,7 @@ Use the ```Get-Command``` cmdlet with the ```-Module``` parameter to get a list 
 Get-Command -Module GraphExplorer | Select-Object name
 ```
 
-Output:
+*Output:*
 ```
 Name                          
 ----                          
@@ -45,7 +45,7 @@ You can use the above cmdlets to retrieve the desired resources. All cmdlets als
 ```powershell
 (Get-GraphUser).value | select objectId, userPrincipalName, userType
 ```
-output:
+*Output:*
 ```
 objectId                             userPrincipalName                             userType
 --------                             -----------------                             --------
@@ -56,7 +56,7 @@ Retrieve a specific user:
 ```powershell
 Get-GraphUser -ObjectId 5fe93869-b023-4b96-aff0-5b72f38f4f60 | select objectId, userPrincipalName, userType
 ```
-output:
+*Output:*
 ```
 objectId                             userPrincipalName                             userType
 --------                             -----------------                             --------
