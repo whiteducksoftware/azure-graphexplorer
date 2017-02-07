@@ -29,7 +29,7 @@ function Connect-GraphExplorer
     $script:GraphApiAccessToken =  Invoke-RestMethod @invokeParameter | select -expand access_token
 }
 
-function Invoke-GraphRequest
+function Invoke-GraphGetRequest
 {
    [CmdletBinding()]
     Param
@@ -61,6 +61,37 @@ function Invoke-GraphRequest
     Invoke-RestMethod @invokeParameter
 }
 
+function Invoke-GraphRequest
+{
+   [CmdletBinding()]
+    Param
+    (
+        [Parameter(Mandatory=$true)]
+        [string]$UriPath,
+
+        [Parameter(Mandatory=$true)]
+        [ValidateSet('POST', 'GET', 'PUT', 'PATCH', 'DELETE')]
+        [string]$Method
+    )
+
+    if ([string]::IsNullOrEmpty($script:GraphApiTenant) -or [string]::IsNullOrEmpty($script:GraphApiAccessToken))
+    {
+        throw "You must call the Connect-GraphExplorer cmdlet before calling any other cmdlets."
+    }
+
+    $invokeParameter = @{
+        Uri = "https://graph.windows.net/$script:GraphApiTenant/$($UriPath.TrimStart('/'))"
+        Headers = @{Authorization = "Bearer $script:GraphApiAccessToken"}
+    }
+
+    if ($invokeParameter.Uri -notmatch '\?api-version=')
+    {
+        $invokeParameter.Uri += "?api-version=1.6"
+    }    
+    
+    Invoke-RestMethod @invokeParameter -Method $Method
+}
+
 function Get-GraphUser
 {
     [CmdletBinding()]
@@ -70,7 +101,7 @@ function Get-GraphUser
         [string]$ObjectId
     )
 
-    Invoke-GraphRequest -Resource 'users' -ObjectId $ObjectId
+    Invoke-GraphGetRequest -Resource 'users' -ObjectId $ObjectId
 }
 
 function Get-GraphApplication
@@ -82,7 +113,7 @@ function Get-GraphApplication
         [string]$ObjectId
     )
 
-    Invoke-GraphRequest -Resource 'applications' -ObjectId $ObjectId
+    Invoke-GraphGetRequest -Resource 'applications' -ObjectId $ObjectId
 }
 
 function Get-GraphServicePrincipal
@@ -94,7 +125,7 @@ function Get-GraphServicePrincipal
         [string]$ObjectId
     )
 
-    Invoke-GraphRequest -Resource 'servicePrincipals' -ObjectId $ObjectId
+    Invoke-GraphGetRequest -Resource 'servicePrincipals' -ObjectId $ObjectId
 }
 
 function Get-GraphDevice
@@ -106,7 +137,7 @@ function Get-GraphDevice
         [string]$ObjectId
     )
 
-    Invoke-GraphRequest -Resource 'devices' -ObjectId $ObjectId
+    Invoke-GraphGetRequest -Resource 'devices' -ObjectId $ObjectId
 }
 
 function Get-GraphGroup
@@ -118,7 +149,7 @@ function Get-GraphGroup
         [string]$ObjectId
     )
 
-    Invoke-GraphRequest -Resource 'groups' -ObjectId $ObjectId
+    Invoke-GraphGetRequest -Resource 'groups' -ObjectId $ObjectId
 }
 
 function Get-GraphGroup
@@ -130,7 +161,7 @@ function Get-GraphGroup
         [string]$ObjectId
     )
 
-    Invoke-GraphRequest -Resource 'groups' -ObjectId $ObjectId
+    Invoke-GraphGetRequest -Resource 'groups' -ObjectId $ObjectId
 }
 
 function Get-GraphContact
@@ -142,7 +173,7 @@ function Get-GraphContact
         [string]$ObjectId
     )
 
-    Invoke-GraphRequest -Resource 'contacts' -ObjectId $ObjectId
+    Invoke-GraphGetRequest -Resource 'contacts' -ObjectId $ObjectId
 }
 
 function Get-GraphTenantDetail
@@ -154,7 +185,7 @@ function Get-GraphTenantDetail
         [string]$ObjectId
     )
 
-    Invoke-GraphRequest -Resource 'tenantDetails' -ObjectId $ObjectId
+    Invoke-GraphGetRequest -Resource 'tenantDetails' -ObjectId $ObjectId
 }
 
 function Get-GraphDirectoryRole
@@ -166,7 +197,7 @@ function Get-GraphDirectoryRole
         [string]$ObjectId
     )
 
-    Invoke-GraphRequest -Resource 'directoryRoles' -ObjectId $ObjectId
+    Invoke-GraphGetRequest -Resource 'directoryRoles' -ObjectId $ObjectId
 }
 
 function Get-GraphDirectoryRoleTemplate
@@ -178,7 +209,7 @@ function Get-GraphDirectoryRoleTemplate
         [string]$ObjectId
     )
 
-    Invoke-GraphRequest -Resource 'directoryRoleTemplates' -ObjectId $ObjectId
+    Invoke-GraphGetRequest -Resource 'directoryRoleTemplates' -ObjectId $ObjectId
 }
 
 function Get-GraphOauth2PermissionGrant
@@ -190,7 +221,7 @@ function Get-GraphOauth2PermissionGrant
         [string]$ObjectId
     )
 
-    Invoke-GraphRequest -Resource 'oauth2PermissionGrants' -ObjectId $ObjectId
+    Invoke-GraphGetRequest -Resource 'oauth2PermissionGrants' -ObjectId $ObjectId
 }
 
 function Get-GraphSubscribedSku
@@ -202,7 +233,7 @@ function Get-GraphSubscribedSku
         [string]$ObjectId
     )
 
-    Invoke-GraphRequest -Resource 'subscribedSkus' -ObjectId $ObjectId
+    Invoke-GraphGetRequest -Resource 'subscribedSkus' -ObjectId $ObjectId
 }
 
 
@@ -219,3 +250,4 @@ Export-ModuleMember -function Get-GraphDirectoryRole
 Export-ModuleMember -function Get-GraphDirectoryRoleTemplate
 Export-ModuleMember -function Get-GraphOauth2PermissionGrant
 Export-ModuleMember -function Get-GraphSubscribedSku
+Export-ModuleMember -function Invoke-GraphRequest
